@@ -2,6 +2,7 @@
 #define HELPERMETHODS_H
 
 #include "Image.h"
+#include <algorithm>
 
 Image multiply(const Image& top, const Image& bottom);
 Image subtract(const Image& top, const Image& bottom);
