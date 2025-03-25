@@ -55,6 +55,18 @@ build CMakeFiles/Project2_COP3503C.dir/src/main.cpp.o: CXX_COMPILER__Project2_CO
   OBJECT_DIR = CMakeFiles/Project2_COP3503C.dir
   OBJECT_FILE_DIR = CMakeFiles/Project2_COP3503C.dir/src
 
+build CMakeFiles/Project2_COP3503C.dir/src/Image.cpp.o: CXX_COMPILER__Project2_COP3503C_unscanned_Debug /Users/sungho/Documents/Project2_COP3503C/src/Image.cpp || cmake_object_order_depends_target_Project2_COP3503C
+  DEP_FILE = CMakeFiles/Project2_COP3503C.dir/src/Image.cpp.o.d
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -fcolor-diagnostics
+  OBJECT_DIR = CMakeFiles/Project2_COP3503C.dir
+  OBJECT_FILE_DIR = CMakeFiles/Project2_COP3503C.dir/src
+
+build CMakeFiles/Project2_COP3503C.dir/src/HelperMethods.cpp.o: CXX_COMPILER__Project2_COP3503C_unscanned_Debug /Users/sungho/Documents/Project2_COP3503C/src/HelperMethods.cpp || cmake_object_order_depends_target_Project2_COP3503C
+  DEP_FILE = CMakeFiles/Project2_COP3503C.dir/src/HelperMethods.cpp.o.d
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -fcolor-diagnostics
+  OBJECT_DIR = CMakeFiles/Project2_COP3503C.dir
+  OBJECT_FILE_DIR = CMakeFiles/Project2_COP3503C.dir/src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Project2_COP3503C
@@ -63,7 +75,7 @@ build CMakeFiles/Project2_COP3503C.dir/src/main.cpp.o: CXX_COMPILER__Project2_CO
 #############################################
 # Link the executable Project2_COP3503C
 
-build Project2_COP3503C: CXX_EXECUTABLE_LINKER__Project2_COP3503C_Debug CMakeFiles/Project2_COP3503C.dir/src/main.cpp.o
+build Project2_COP3503C: CXX_EXECUTABLE_LINKER__Project2_COP3503C_Debug CMakeFiles/Project2_COP3503C.dir/src/main.cpp.o CMakeFiles/Project2_COP3503C.dir/src/Image.cpp.o CMakeFiles/Project2_COP3503C.dir/src/HelperMethods.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
   OBJECT_DIR = CMakeFiles/Project2_COP3503C.dir
   POST_BUILD = :
