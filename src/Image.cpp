@@ -32,12 +32,7 @@ bool Image::read(const std::string& filename) {
 
 bool Image::write(const std::string& filename) const {
     std::ofstream out(filename, std::ios::binary);
-    if (!out) {
-        std::cerr << "❌ Failed to open file for writing: " << filename << std::endl;
-        return false;
-    }
 
-    // header 쓰기
     out.write(&header.idLength, 1);
     out.write(&header.colorMapType, 1);
     out.write(&header.dataTypeCode, 1);
@@ -51,7 +46,6 @@ bool Image::write(const std::string& filename) const {
     out.write(&header.bitsPerPixel, 1);
     out.write(&header.imageDescriptor, 1);
 
-    // 픽셀 데이터 쓰기
     out.write(reinterpret_cast<const char*>(pixels.data()), pixels.size() * sizeof(Pixel));
 
     out.close();

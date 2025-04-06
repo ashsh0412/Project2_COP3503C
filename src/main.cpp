@@ -1,62 +1,119 @@
 #include "Image.h"
 #include "HelperMethods.h"
 #include <iostream>
-#include <filesystem>
+#include <fstream>
+#include <sstream>
 
-int main() {
+bool fileExists(const std::string& filename) {
+    std::ifstream file(filename);
+    return file.good();
+}
 
-	// Task 1
-	Image layer1("src/input/layer1.tga");
-	Image pattern1("src/input/pattern1.tga");
-	Image task1 = multiply(layer1, pattern1);
-	task1.write("src/output/part1.tga");
+bool isTgaFile(const std::string& filename) {
+    return filename.size() >= 4 && filename.substr(filename.size() - 4) == ".tga";
+}
 
-	// Task 2
-	Image layer2("src/input/layer2.tga");
-	Image car("src/input/car.tga");
-	Image task2 = subtract(car, layer2);
-	task2.write("src/output/part2.tga");
+void printHelp() {
+    std::cout << "Project 2: Image Processing, Spring 2025\n";
+    std::cout << "\n";
+    std::cout << "Usage:\n\t./project2.out [output] [firstImage] [method] [...]\n";
+}
 
-	// Task 3
-	Image pattern2("src/input/pattern2.tga");
-	Image text("src/input/text.tga");
-	Image temp3 = multiply(layer1, pattern2);
-	Image task3 = screen(text, temp3);
-	task3.write("src/output/part3.tga");
+int main(int argc, char* argv[]) {
+    if (argc == 1 || (argc == 2 && std::string(argv[1]) == "--help")) {
+        printHelp();
+        return 0;
+    }
 
-	// Task 4
-	Image circles("src/input/circles.tga");
-	Image temp4 = multiply(layer2, circles);
-	Image task4 = subtract(temp4, pattern2);
-	task4.write("src/output/part4.tga");
+    if (argc < 3 || !isTgaFile(argv[1])) {
+        std::cerr << "Invalid file name.";
+        return 1;
+    }
 
-	// Task 5
-	Image task5 = overlay(layer1, pattern1);
-	task5.write("src/output/part5.tga");
+    std::string outputFile = argv[1];
+    std::string inputFile = argv[2];
 
-	// Task 6
-	Image task6 = addChannel(car, 200, 'g');
-	task6.write("src/output/part6.tga");
+    if (!isTgaFile(inputFile)) {
+        std::cerr << "Invalid file name.";
+        return 1;
+    }
+    if (!fileExists(inputFile)) {
+        std::cerr << "File does not exist.";
+        return 1;
+    }
 
-	// Task 7
-	Image task7 = scaleChannel(car, 4.0f, 'r');
-	task7 = scaleChannel(task7, 0.0f, 'b');
-	task7.write("src/output/part7.tga");
+    Image tracking(inputFile);
 
-	// Task 8
-	onlyChannel(car, 'r').write("src/output/part8_r.tga");
-	onlyChannel(car, 'g').write("src/output/part8_g.tga");
-	onlyChannel(car, 'b').write("src/output/part8_b.tga");
+    for (int i = 3; i < argc; ++i) {
+        std::string cmd = argv[i];
 
-	// Task 9
-	Image red("src/input/layer_red.tga");
-	Image green("src/input/layer_green.tga");
-	Image blue("src/input/layer_blue.tga");
-	combineChannels(red, green, blue).write("src/output/part9.tga");
+        auto getArg = [&](int offset) -> std::string {
+            if (i + offset >= argc) {
+                std::cerr << "Missing argument.";
+                exit(1);
+            }
+            return argv[i + offset];
+        };
 
-	// Task 10
-	Image text2("src/input/text2.tga");
-	flip180(text2).write("src/output/part10.tga");
+        auto getImageArg = [&](int offset) -> Image {
+            std::string filename = getArg(offset);
+            if (!isTgaFile(filename)) {
+                std::cerr << "Invalid argument, invalid file name.";
+                exit(1);
+            }
+            if (!fileExists(filename)) {
+                std::cerr << "Invalid argument, file does not exist.";
+                exit(1);
+            }
+            return Image(filename);
+        };
 
-	return 0;
+        auto getIntArg = [&](int offset) -> int {
+            std::string val = getArg(offset);
+            try {
+                return std::stoi(val);
+            } catch (...) {
+                std::cerr << "Invalid argument, expected number.";
+                exit(1);
+            }
+        };
+
+        if (cmd == "multiply") {
+            tracking = multiply(tracking, getImageArg(1)); i++;
+        } else if (cmd == "subtract") {
+            tracking = subtract(tracking, getImageArg(1)); i++;
+        } else if (cmd == "screen") {
+            tracking = screen(tracking, getImageArg(1)); i++;
+        } else if (cmd == "overlay") {
+            tracking = overlay(tracking, getImageArg(1)); i++;
+        } else if (cmd == "combine") {
+            tracking = combineChannels(tracking, getImageArg(1), getImageArg(2)); i += 2;
+        } else if (cmd == "flip") {
+            tracking = flip180(tracking);
+        } else if (cmd == "onlyred") {
+            tracking = onlyChannel(tracking, 'r');
+        } else if (cmd == "onlygreen") {
+            tracking = onlyChannel(tracking, 'g');
+        } else if (cmd == "onlyblue") {
+            tracking = onlyChannel(tracking, 'b');
+        } else if (cmd == "addred") {
+            tracking = addChannel(tracking, getIntArg(1), 'r'); i++;
+        } else if (cmd == "addgreen") {
+            tracking = addChannel(tracking, getIntArg(1), 'g'); i++;
+        } else if (cmd == "addblue") {
+            tracking = addChannel(tracking, getIntArg(1), 'b'); i++;
+        } else if (cmd == "scalered") {
+            tracking = scaleChannel(tracking, getIntArg(1), 'r'); i++;
+        } else if (cmd == "scalegreen") {
+            tracking = scaleChannel(tracking, getIntArg(1), 'g'); i++;
+        } else if (cmd == "scaleblue") {
+            tracking = scaleChannel(tracking, getIntArg(1), 'b'); i++;
+        } else {
+            std::cerr << "Invalid method name.";
+            return 1;
+        }
+    }
+
+    tracking.write(outputFile);
+    return 0;
 }
